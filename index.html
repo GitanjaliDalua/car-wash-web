@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoShine | Premium Auto Spa & Mobile Detailing</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                        cyanaccent: '#06b6d4',
+                        cyanbright: '#00f2fe',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Modern Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(6, 182, 212, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 242, 254, 0.25);
+        }
+
+        /* Electric Cyan Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #00f2fe 0%, #06b6d4 50%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Before & After Interactive Slider */
+        .ba-container {
+            position: relative;
+            user-select: none;
+            overflow: hidden;
+        }
+        .ba-img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            overflow: hidden;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+
+        /* Print styling for receipts */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-receipt, #printable-receipt * {
+                visibility: visible;
+            }
+            #printable-receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                color: #000;
+                background: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-cyanaccent selection:text-white">
+
+    <!-- Toast Notification Banner -->
+    <div id="toast-notification" class="fixed top-24 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-in-out glass-panel border-l-4 border-cyanaccent text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 max-w-md">
+        <i class="fa-solid fa-circle-check text-cyanaccent text-2xl" id="toast-icon"></i>
+        <div>
+            <h4 class="font-bold text-sm" id="toast-title">Notification</h4>
+            <p class="text-xs text-slate-300" id="toast-message">Message text here.</p>
+        </div>
+    </div>
+
+    <!-- 1. HEADER & NAVIGATION -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-slate-800 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <a href="#home" class="flex items-center space-x-3 group">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyanaccent to-blue-600 flex items-center justify-center shadow-lg shadow-cyanaccent/30 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-car-wash text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-black tracking-wider text-white">AUTO<span class="text-gradient">SHINE</span></span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8 text-sm font-semibold">
+                    <a href="#home" class="text-slate-300 hover:text-cyanbright transition-colors">Home</a>
+                    <a href="#services" class="text-slate-300 hover:text-cyanbright transition-colors">Services</a>
+                    <a href="#pricing" class="text-slate-300 hover:text-cyanbright transition-colors">Pricing & Estimator</a>
+                    <a href="#visualizer" class="text-slate-300 hover:text-cyanbright transition-colors">Before / After</a>
+                    <a href="#reviews" class="text-slate-300 hover:text-cyanbright transition-colors">Reviews</a>
+                    <a href="#faq" class="text-slate-300 hover:text-cyanbright transition-colors">FAQ</a>
+                    <a href="#contact" class="text-slate-300 hover:text-cyanbright transition-colors">Contact</a>
+                </nav>
+
+                <!-- Book Now Action CTA -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button onclick="openBookingModal()" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-bold rounded-xl group bg-gradient-to-r from-cyanbright to-blue-600 text-white shadow-lg shadow-cyanaccent/20 hover:shadow-cyanaccent/40 hover:scale-105 transition-all">
+                        <span class="px-5 py-2.5 rounded-[10px] bg-darkbg/40 group-hover:bg-transparent transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-check text-cyanbright group-hover:text-white"></i> Book Appointment
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2 rounded-lg focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Collapsible Mobile Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-t border-slate-800 px-4 pt-3 pb-6 space-y-3">
+            <a href="#home" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">Home</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">Services</a>
+            <a href="#pricing" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">Pricing & Estimator</a>
+            <a href="#visualizer" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">Before / After</a>
+            <a href="#reviews" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">Reviews</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">FAQ</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-cyanbright hover:bg-slate-800/50">Contact</a>
+            <button onclick="openBookingModal(); toggleMobileMenu();" class="w-full mt-2 bg-gradient-to-r from-cyanbright to-blue-600 text-white font-bold px-5 py-3 rounded-xl shadow-lg shadow-cyanaccent/20">
+                Book Appointment Now
+            </button>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- 2. HERO SECTION -->
+        <section id="home" class="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-16">
+            <!-- Neon Ambient Glow backdrop -->
+            <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-cyanaccent/15 rounded-full blur-[140px] pointer-events-none"></div>
+            <div class="absolute bottom-10 right-10 w-[450px] h-[450px] bg-blue-600/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Hero Text Content -->
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border-cyanaccent/30 text-cyanbright text-xs sm:text-sm font-semibold">
+                            <span class="flex h-2.5 w-2.5 rounded-full bg-cyanbright animate-ping"></span>
+                            #1 Rated Luxury Auto Spa & Doorstep Mobile Detailing
+                        </div>
+
+                        <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight">
+                            Showroom Shine & <span class="text-gradient">Precision Auto Spa</span> Services
+                        </h1>
+
+                        <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0">
+                            Give your vehicle the ultimate royal care. Hydrophobic ceramic protection, eco-friendly deep steam sanitation, and doorstep mobile wash right at your location.
+                        </p>
+
+                        <!-- Action CTAs -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                            <button onclick="openBookingModal()" class="w-full sm:w-auto bg-gradient-to-r from-cyanbright to-blue-600 hover:from-cyanaccent hover:to-blue-700 text-white px-8 py-4 rounded-xl font-extrabold text-base shadow-xl shadow-cyanaccent/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calendar-alt"></i> Book Appointment
+                            </button>
+                            <a href="#pricing" class="w-full sm:w-auto glass-panel hover:bg-slate-800/80 border border-slate-700 text-slate-200 px-7 py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-tags text-cyanbright"></i> Explore Packages
+                            </a>
+                        </div>
+
+                        <!-- Stats Ticker -->
+                        <div class="grid grid-cols-3 gap-4 pt-8 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0">
+                            <div class="glass-card p-4 rounded-xl text-center">
+                                <h3 class="text-2xl sm:text-3xl font-black text-cyanbright">15,000+</h3>
+                                <p class="text-xs text-slate-400 font-medium mt-1">Cars Washed</p>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl text-center">
+                                <h3 class="text-2xl sm:text-3xl font-black text-yellow-400 flex items-center justify-center gap-1">
+                                    4.9 <i class="fa-solid fa-star text-sm"></i>
+                                </h3>
+                                <p class="text-xs text-slate-400 font-medium mt-1">1,200+ Reviews</p>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl text-center">
+                                <h3 class="text-2xl sm:text-3xl font-black text-emerald-400">100%</h3>
+                                <p class="text-xs text-slate-400 font-medium mt-1">Eco-Friendly</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Supercar Image Visual -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative mx-auto max-w-md lg:max-w-none rounded-3xl overflow-hidden glass-panel p-3 border border-slate-700 shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=800&q=80" alt="Supercar Detailing" class="w-full h-80 sm:h-96 object-cover rounded-2xl" onerror="this.src='https://placehold.co/600x400/0f172a/06b6d4?text=AutoShine+Auto+Spa'">
+                            
+                            <!-- Floating Badge 1 -->
+                            <div class="absolute top-6 left-6 glass-panel px-4 py-2.5 rounded-2xl flex items-center gap-3 shadow-lg border-white/10">
+                                <div class="w-10 h-10 rounded-xl bg-cyanbright/20 text-cyanbright flex items-center justify-center font-bold text-lg">
+                                    <i class="fa-solid fa-truck-sparkles"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400">Available Service</p>
+                                    <p class="text-xs font-bold text-white">Station & Mobile Van</p>
+                                </div>
+                            </div>
+
+                            <!-- Floating Badge 2 -->
+                            <div class="absolute bottom-6 right-6 glass-panel px-4 py-3 rounded-2xl shadow-xl border-white/10 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400">Quality Guarantee</p>
+                                    <p class="text-xs font-bold text-white">100% Satisfaction</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SERVICES, PACKAGES & PRICE ESTIMATOR -->
+        <section id="services" class="py-20 bg-slate-900/60 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-cyanbright mb-2">Our Signature Services</h2>
+                    <h3 class="text-3xl sm:text-5xl font-extrabold text-white">Professional Detailing Packages</h3>
+                    <p class="text-slate-400 mt-3 text-base">Select your vehicle type below to dynamically update prices for all packages.</p>
+                </div>
+
+                <!-- Global Vehicle Type Selector -->
+                <div class="max-w-2xl mx-auto mb-12 glass-panel p-2 rounded-2xl flex flex-col sm:flex-row gap-2" id="global-vehicle-selector">
+                    <button onclick="setGlobalVehicle('sedan', 0)" id="global-sedan" class="v-select-btn active flex-1 py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 border-cyanaccent bg-slate-800 text-white transition-all">
+                        <i class="fa-solid fa-car"></i> Sedan / Hatch
+                    </button>
+                    <button onclick="setGlobalVehicle('suv', 20)" id="global-suv" class="v-select-btn flex-1 py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 border-transparent text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-car-side"></i> SUV / Crossover (+$20)
+                    </button>
+                    <button onclick="setGlobalVehicle('truck', 40)" id="global-truck" class="v-select-btn flex-1 py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 border-transparent text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-truck-pickup"></i> Luxury / Truck (+$40)
+                    </button>
+                </div>
+
+                <!-- Package Grid Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Express Wash -->
+                    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-cyanaccent/20 text-cyanbright flex items-center justify-center text-xl font-bold mb-4">
+                                <i class="fa-solid fa-shower"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-white">Express Wash</h4>
+                            <p class="text-slate-400 text-xs mt-1">Quick exterior wash & shine maintenance.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-black text-white pkg-price" data-base="35">$35</span>
+                                <span class="text-xs text-slate-400">/ session</span>
+                            </div>
+                            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> High-pressure foam wash</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Wheel rim wash & tyre shine</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Microfiber streak-free dry</li>
+                                <li class="flex items-center gap-2 text-slate-500 line-through"><i class="fa-solid fa-xmark"></i> Interior vacuum</li>
+                            </ul>
+                        </div>
+                        <button onclick="triggerBookingWithPkg('Express Wash', 35)" class="w-full glass-panel hover:bg-cyanaccent hover:text-white border-cyanaccent/40 text-cyanbright font-semibold py-3 rounded-xl transition-all text-xs uppercase tracking-wider">
+                            Select Express
+                        </button>
+                    </div>
+
+                    <!-- Premium Detail (Highlighted) -->
+                    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between border-2 border-cyanbright shadow-2xl shadow-cyanaccent/20 relative scale-105 group">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyanbright to-blue-600 text-white px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
+                            Most Popular
+                        </div>
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-cyanbright to-blue-600 text-white flex items-center justify-center text-xl font-bold mb-4">
+                                <i class="fa-solid fa-gem"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-white">Premium Detail</h4>
+                            <p class="text-slate-400 text-xs mt-1">Comprehensive full interior & exterior care.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-black text-white pkg-price" data-base="75">$75</span>
+                                <span class="text-xs text-slate-400">/ session</span>
+                            </div>
+                            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Everything in Express</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Full cabin interior vacuum</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Dashboard polish & UV coat</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Spray wax polish gloss</li>
+                            </ul>
+                        </div>
+                        <button onclick="triggerBookingWithPkg('Premium Detail', 75)" class="w-full bg-gradient-to-r from-cyanbright to-blue-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyanaccent/30 transition-all text-xs uppercase tracking-wider">
+                            Select Premium
+                        </button>
+                    </div>
+
+                    <!-- Ceramic Coating -->
+                    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-cyanaccent/20 text-cyanbright flex items-center justify-center text-xl font-bold mb-4">
+                                <i class="fa-solid fa-shield-cat"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-white">Ceramic Shield</h4>
+                            <p class="text-slate-400 text-xs mt-1">Hydrophobic nanocoat & paint protection.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-black text-white pkg-price" data-base="150">$150</span>
+                                <span class="text-xs text-slate-400">/ session</span>
+                            </div>
+                            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Everything in Premium Detail</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Paint clay decontamination</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> 9H Ceramic coat application</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Hydrophobic gloss barrier</li>
+                            </ul>
+                        </div>
+                        <button onclick="triggerBookingWithPkg('Ceramic Shield', 150)" class="w-full glass-panel hover:bg-cyanaccent hover:text-white border-cyanaccent/40 text-cyanbright font-semibold py-3 rounded-xl transition-all text-xs uppercase tracking-wider">
+                            Select Ceramic
+                        </button>
+                    </div>
+
+                    <!-- Doorstep Mobile Spa -->
+                    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-cyanaccent/20 text-cyanbright flex items-center justify-center text-xl font-bold mb-4">
+                                <i class="fa-solid fa-truck-sparkles"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-white">Doorstep Mobile Spa</h4>
+                            <p class="text-slate-400 text-xs mt-1">We bring power & water to your location.</p>
+                            <div class="my-6">
+                                <span class="text-4xl font-black text-white pkg-price" data-base="95">$95</span>
+                                <span class="text-xs text-slate-400">/ session</span>
+                            </div>
+                            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Full Premium Wash at your home</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Self-powered mobile detail van</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Steam sanitization interior</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanbright"></i> Zero hassle, total comfort</li>
+                            </ul>
+                        </div>
+                        <button onclick="triggerBookingWithPkg('Doorstep Mobile Spa', 95)" class="w-full glass-panel hover:bg-cyanaccent hover:text-white border-cyanaccent/40 text-cyanbright font-semibold py-3 rounded-xl transition-all text-xs uppercase tracking-wider">
+                            Select Mobile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC PRICE ESTIMATOR CALCULATOR TOOL -->
+                <div id="pricing" class="mt-20 glass-panel rounded-3xl p-6 sm:p-10 border border-slate-700 shadow-2xl">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-7 space-y-6">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-cyanbright">Interactive Estimator</span>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Custom Price Calculator</h3>
+                                <p class="text-slate-400 text-sm mt-1">Calculate instant transparent estimates with custom add-ons.</p>
+                            </div>
+
+                            <!-- Step 1: Vehicle Type -->
+                            <div>
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">1. Vehicle Type</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button onclick="calcVehicle('sedan', 0)" id="calc-v-sedan" class="calc-v-btn active glass-card p-3 rounded-xl text-center border-2 border-cyanbright text-xs font-bold text-white">
+                                        Sedan ($0)
+                                    </button>
+                                    <button onclick="calcVehicle('suv', 20)" id="calc-v-suv" class="calc-v-btn glass-card p-3 rounded-xl text-center border-2 border-transparent text-xs font-bold text-slate-300">
+                                        SUV (+$20)
+                                    </button>
+                                    <button onclick="calcVehicle('truck', 40)" id="calc-v-truck" class="calc-v-btn glass-card p-3 rounded-xl text-center border-2 border-transparent text-xs font-bold text-slate-300">
+                                        Truck/Lux (+$40)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Base Package Selector -->
+                            <div>
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">2. Base Package</label>
+                                <select id="calc-package-select" onchange="updateEstimatorTotal()" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl p-3 focus:outline-none focus:border-cyanbright">
+                                    <option value="35">Express Wash ($35)</option>
+                                    <option value="75" selected>Premium Detail ($75)</option>
+                                    <option value="150">Ceramic Shield ($150)</option>
+                                    <option value="95">Doorstep Mobile Spa ($95)</option>
+                                </select>
+                            </div>
+
+                            <!-- Step 3: Add-on Checkboxes -->
+                            <div>
+                                <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">3. Add-on Services</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <label class="glass-card p-3 rounded-xl flex items-center justify-between cursor-pointer hover:border-slate-600">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" value="30" onchange="updateEstimatorTotal()" class="calc-addon w-4 h-4 rounded text-cyanbright bg-slate-800 border-slate-700">
+                                            <span class="text-xs font-medium text-slate-200">Engine Bay Wash</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-cyanbright">+$30</span>
+                                    </label>
+
+                                    <label class="glass-card p-3 rounded-xl flex items-center justify-between cursor-pointer hover:border-slate-600">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" value="35" onchange="updateEstimatorTotal()" class="calc-addon w-4 h-4 rounded text-cyanbright bg-slate-800 border-slate-700">
+                                            <span class="text-xs font-medium text-slate-200">Leather Conditioning</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-cyanbright">+$35</span>
+                                    </label>
+
+                                    <label class="glass-card p-3 rounded-xl flex items-center justify-between cursor-pointer hover:border-slate-600">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" value="45" onchange="updateEstimatorTotal()" class="calc-addon w-4 h-4 rounded text-cyanbright bg-slate-800 border-slate-700">
+                                            <span class="text-xs font-medium text-slate-200">Ceramic Spray Gloss</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-cyanbright">+$45</span>
+                                    </label>
+
+                                    <label class="glass-card p-3 rounded-xl flex items-center justify-between cursor-pointer hover:border-slate-600">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" value="40" onchange="updateEstimatorTotal()" class="calc-addon w-4 h-4 rounded text-cyanbright bg-slate-800 border-slate-700">
+                                            <span class="text-xs font-medium text-slate-200">Headlight Restoration</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-cyanbright">+$40</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price Calculation Receipt Card -->
+                        <div class="lg:col-span-5 glass-panel p-6 sm:p-8 rounded-2xl border-cyanbright/30 flex flex-col justify-between h-full">
+                            <div>
+                                <h4 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-3 flex justify-between items-center">
+                                    <span>Estimate Breakdown</span>
+                                    <i class="fa-solid fa-calculator text-cyanbright"></i>
+                                </h4>
+                                
+                                <div class="space-y-3 text-xs sm:text-sm">
+                                    <div class="flex justify-between text-slate-300">
+                                        <span>Vehicle Type Surcharge:</span>
+                                        <span id="calc-breakdown-v" class="font-bold">$0</span>
+                                    </div>
+                                    <div class="flex justify-between text-slate-300">
+                                        <span>Selected Package Base:</span>
+                                        <span id="calc-breakdown-pkg" class="font-bold">$75</span>
+                                    </div>
+                                    <div class="flex justify-between text-slate-300">
+                                        <span>Add-ons Surcharge:</span>
+                                        <span id="calc-breakdown-addons" class="font-bold">$0</span>
+                                    </div>
+                                    <div class="border-t border-slate-700 pt-3 mt-3 flex justify-between items-end">
+                                        <div>
+                                            <p class="text-[10px] uppercase font-bold text-slate-400">Total Calculated Cost</p>
+                                            <p class="text-3xl font-black text-gradient" id="calc-total-display">$75</p>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400">Taxes Included</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="bookWithCalculatedEstimate()" class="w-full mt-6 bg-gradient-to-r from-cyanbright to-blue-600 hover:from-cyanaccent hover:to-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-cyanaccent/20 transition-all flex items-center justify-center gap-2">
+                                Book With Calculated Price <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. BEFORE & AFTER WASH VISUALIZER SLIDER -->
+        <section id="visualizer" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-cyanbright mb-2">Visual Transformation</h2>
+                    <h3 class="text-3xl sm:text-5xl font-extrabold text-white">Before & After Wash Visualizer</h3>
+                    <p class="text-slate-400 mt-2">Drag the slider horizontally to reveal how AutoShine restores vehicles to pristine condition.</p>
+                </div>
+
+                <div class="max-w-4xl mx-auto glass-panel p-4 sm:p-6 rounded-3xl border border-slate-700 shadow-2xl">
+                    <div id="ba-slider" class="ba-container h-[320px] sm:h-[480px] rounded-2xl cursor-ew-resize">
+                        <!-- Clean Image (After) -->
+                        <img src="https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=1200&q=80" alt="Sparkling Clean Car" class="absolute inset-0 w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x600/06b6d4/ffffff?text=AFTER:+Sparkling+Clean+Supercar'">
+                        <span class="absolute top-4 right-4 bg-cyanaccent/90 backdrop-blur-md text-white text-xs font-black px-3.5 py-1.5 rounded-lg border border-white/20 shadow-lg">AFTER AUTOSHINE</span>
+
+                        <!-- Dirty Image (Before Overlay Clipped) -->
+                        <div id="ba-overlay" class="ba-img-overlay">
+                            <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80" alt="Dirty Muddy Car" class="absolute top-0 left-0 max-w-none h-full w-[800px] sm:w-[1150px] object-cover filter brightness-75 contrast-125 saturate-50" onerror="this.src='https://placehold.co/1200x600/1e293b/ffffff?text=BEFORE:+Dirty+Vehicle'">
+                            <span class="absolute top-4 left-4 bg-slate-900/90 backdrop-blur-md text-slate-300 text-xs font-black px-3.5 py-1.5 rounded-lg border border-white/10 shadow-lg">BEFORE WASH</span>
+                        </div>
+
+                        <!-- Draggable Divider Handle -->
+                        <div id="ba-handle" class="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize shadow-[0_0_15px_rgba(0,242,254,0.9)]" style="left: 50%;">
+                            <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-cyanbright border-2 border-white flex items-center justify-center text-slate-900 text-xs font-bold shadow-xl">
+                                <i class="fa-solid fa-arrows-left-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workflow Highlights below visualizer -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+                        <div class="glass-card p-3 rounded-xl text-center border-l-4 border-cyanbright">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Phase 1</p>
+                            <p class="text-xs font-bold text-slate-200 mt-0.5">Snow Foam Pre-Soak</p>
+                        </div>
+                        <div class="glass-card p-3 rounded-xl text-center border-l-4 border-cyanbright">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Phase 2</p>
+                            <p class="text-xs font-bold text-slate-200 mt-0.5">Two-Bucket Hand Wash</p>
+                        </div>
+                        <div class="glass-card p-3 rounded-xl text-center border-l-4 border-cyanbright">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Phase 3</p>
+                            <p class="text-xs font-bold text-slate-200 mt-0.5">Decontamination Clay</p>
+                        </div>
+                        <div class="glass-card p-3 rounded-xl text-center border-l-4 border-cyanbright">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Phase 4</p>
+                            <p class="text-xs font-bold text-slate-200 mt-0.5">Hydrophobic Sealant</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. TESTIMONIALS & CUSTOMER REVIEWS -->
+        <section id="reviews" class="py-20 bg-slate-900/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-cyanbright mb-2">Verified Feedback</h2>
+                    <h3 class="text-3xl sm:text-5xl font-extrabold text-white">What Car Owners Say</h3>
+                    <p class="text-slate-400 mt-2">Read real testimonials from luxury & daily drive vehicle owners.</p>
+                </div>
+
+                <!-- Testimonial Cards Grid / Dynamic Slider -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="reviews-container">
+                    <!-- Review 1 -->
+                    <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex text-yellow-400 text-sm mb-3">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 text-sm italic">"The doorstep mobile van service is a lifesaver! They cleaned my BMW M3 in my own driveway while I worked inside. Looks better than when I bought it!"</p>
+                        </div>
+                        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-700">
+                            <div class="w-10 h-10 rounded-full bg-cyanaccent/20 text-cyanbright font-bold flex items-center justify-center text-sm">
+                                AR
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-bold text-white">Alex Ramirez</h5>
+                                <p class="text-xs text-slate-400">BMW M3 Owner • Doorstep Service</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="glass-card p-6 rounded-2xl flex flex-col justify-between border-cyanaccent/30">
+                        <div>
+                            <div class="flex text-yellow-400 text-sm mb-3">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 text-sm italic">"The Ceramic Shield treatment is incredible. Water just beads off immediately during heavy rain. The staff is extremely professional and detail-oriented."</p>
+                        </div>
+                        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-700">
+                            <div class="w-10 h-10 rounded-full bg-blue-600/20 text-blue-400 font-bold flex items-center justify-center text-sm">
+                                SL
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-bold text-white">Sophia Chen</h5>
+                                <p class="text-xs text-slate-400">Porsche Macan • Ceramic Shield</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex text-yellow-400 text-sm mb-3">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 text-sm italic">"Took my dirty family SUV after a cross-country road trip. All pet hair and food stains were completely steam eliminated. Fantastic service!"</p>
+                        </div>
+                        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-700">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm">
+                                DJ
+                            </div>
+                            <div>
+                                <h5 class="text-sm font-bold text-white">David Miller</h5>
+                                <p class="text-xs text-slate-400">Audi Q7 • Premium Interior Detail</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. FAQ ACCORDION SECTION -->
+        <section id="faq" class="py-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-cyanbright mb-2">Got Questions?</h2>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Frequently Asked Questions</h3>
+                </div>
+
+                <div class="space-y-4" id="faq-accordion">
+                    <!-- FAQ Item 1 -->
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-700">
+                        <button onclick="toggleFaq(1)" class="w-full text-left p-5 flex justify-between items-center font-bold text-white text-base focus:outline-none">
+                            <span>How does the Doorstep Mobile Car Wash work?</span>
+                            <i id="faq-icon-1" class="fa-solid fa-chevron-down text-cyanbright transition-transform duration-200"></i>
+                        </button>
+                        <div id="faq-answer-1" class="hidden px-5 pb-5 text-sm text-slate-300 border-t border-slate-800 pt-3">
+                            Our mobile van unit comes fully equipped with its own deionized water tank and power generator. We don't need access to your electrical outlets or hose bib. You just park your car, and our certified detailer completes the full appointment right in your driveway or parking space.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-700">
+                        <button onclick="toggleFaq(2)" class="w-full text-left p-5 flex justify-between items-center font-bold text-white text-base focus:outline-none">
+                            <span>Are your cleaning chemicals safe for matte or ceramic coated paint?</span>
+                            <i id="faq-icon-2" class="fa-solid fa-chevron-down text-cyanbright transition-transform duration-200"></i>
+                        </button>
+                        <div id="faq-answer-2" class="hidden px-5 pb-5 text-sm text-slate-300 border-t border-slate-800 pt-3">
+                            Yes, absolutely! We use 100% pH-neutral, biodegradable shampoos and non-abrasive microfiber towels designed specifically to safely treat ceramic coatings, paint protection films (PPF), vinyl wraps, and sensitive matte finishes without stripping protection.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-700">
+                        <button onclick="toggleFaq(3)" class="w-full text-left p-5 flex justify-between items-center font-bold text-white text-base focus:outline-none">
+                            <span>How long does a Ceramic Coating treatment last?</span>
+                            <i id="faq-icon-3" class="fa-solid fa-chevron-down text-cyanbright transition-transform duration-200"></i>
+                        </button>
+                        <div id="faq-answer-3" class="hidden px-5 pb-5 text-sm text-slate-300 border-t border-slate-800 pt-3">
+                            Our 9H Ceramic Shield package includes a 6-to-12 month hydrophobic barrier guarantee under standard driving conditions. It protects against UV rays, acid rain, bird droppings, and road grime while making routine washes effortless.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-700">
+                        <button onclick="toggleFaq(4)" class="w-full text-left p-5 flex justify-between items-center font-bold text-white text-base focus:outline-none">
+                            <span>Can I cancel or reschedule my appointment?</span>
+                            <i id="faq-icon-4" class="fa-solid fa-chevron-down text-cyanbright transition-transform duration-200"></i>
+                        </button>
+                        <div id="faq-answer-4" class="hidden px-5 pb-5 text-sm text-slate-300 border-t border-slate-800 pt-3">
+                            Yes! You can reschedule or cancel free of charge up to 2 hours before your scheduled appointment time using the confirmation details sent to your SMS/Email.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. CONTACT, LOCATION & FOOTER -->
+        <section id="contact" class="py-20 bg-slate-900/80 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                    
+                    <!-- Contact Form & Info -->
+                    <div class="lg:col-span-6 space-y-6">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-cyanbright">Reach Us Anytime</span>
+                            <h3 class="text-3xl font-extrabold text-white mt-1">Get in Touch with AutoShine</h3>
+                            <p class="text-slate-400 text-sm mt-1">Have a custom fleet request or specific detailing inquiry? Send us a quick note.</p>
+                        </div>
+
+                        <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <input type="text" required placeholder="Your Name" class="bg-slate-800 border border-slate-700 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-cyanbright">
+                                <input type="email" required placeholder="Email Address" class="bg-slate-800 border border-slate-700 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-cyanbright">
+                            </div>
+                            <input type="text" placeholder="Subject / Car Model" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-cyanbright">
+                            <textarea rows="4" required placeholder="How can we help you?" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-cyanbright"></textarea>
+                            <button type="submit" class="bg-gradient-to-r from-cyanbright to-blue-600 hover:from-cyanaccent text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-cyanaccent/20 transition-all text-sm">
+                                Send Message <i class="fa-solid fa-paper-plane ml-1"></i>
+                            </button>
+                        </form>
+
+                        <div class="grid grid-cols-2 gap-4 pt-4 text-xs">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-phone text-cyanbright text-lg"></i>
+                                <div>
+                                    <p class="text-slate-400">Hotline</p>
+                                    <p class="font-bold text-white">+1 (800) 555-SHINE</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-clock text-cyanbright text-lg"></i>
+                                <div>
+                                    <p class="text-slate-400">Operating Hours</p>
+                                    <p class="font-bold text-white">Mon-Sun: 7am - 8pm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location & Interactive Google Map -->
+                    <div class="lg:col-span-6 flex flex-col justify-between">
+                        <div class="glass-panel rounded-3xl p-3 border border-slate-700 overflow-hidden h-full min-h-[300px]">
+                            <!-- Mock Interactive Google Map iFrame -->
+                            <iframe title="AutoShine Location Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.83543450937!2d-122.4194155!3d37.7749295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085808580858085%3A0x8085808580858085!2sSan%20Francisco%20Auto%20Spa!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" class="w-full h-full rounded-2xl border-0 min-h-[320px]" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer Bottom Bar -->
+                <div class="mt-16 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-6 h-6 rounded-lg bg-cyanbright flex items-center justify-center text-slate-900 font-bold">
+                            <i class="fa-solid fa-car-wash text-xs"></i>
+                        </div>
+                        <span class="font-bold text-white">AUTOSHINE SPA & MOBILE WASH</span>
+                    </div>
+                    <p>© 2026 AutoShine Auto Spa Inc. All rights reserved.</p>
+                    <div class="flex space-x-4 text-base text-slate-400">
+                        <a href="#" class="hover:text-cyanbright"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-cyanbright"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="hover:text-cyanbright"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="hover:text-cyanbright"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 5. INTERACTIVE MULTI-STEP BOOKING MODAL -->
+    <div id="booking-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-panel w-full max-w-2xl rounded-3xl border border-slate-700 shadow-2xl overflow-hidden relative my-8 animate-fade-in">
+            
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-cyanbright/20 text-cyanbright flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-lg">Book Service Appointment</h3>
+                        <p class="text-xs text-slate-400" id="step-indicator">Step 1 of 4: Select Service & Vehicle</p>
+                    </div>
+                </div>
+                <button onclick="closeBookingModal()" class="text-slate-400 hover:text-white p-2 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Booking Progress Bar -->
+            <div class="w-full bg-slate-800 h-1.5">
+                <div id="modal-progress" class="bg-gradient-to-r from-cyanbright to-blue-600 h-1.5 w-1/4 transition-all duration-300"></div>
+            </div>
+
+            <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="p-6">
+                <!-- STEP 1: SERVICE & VEHICLE -->
+                <div id="booking-step-1" class="space-y-5">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Vehicle Type Surcharge</label>
+                        <select id="modal-vehicle-type" onchange="recalculateModalTotal()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyanbright">
+                            <option value="0" selected>Sedan / Hatchback (Standard Rate)</option>
+                            <option value="20">SUV / Crossover (+$20 Surcharge)</option>
+                            <option value="40">Luxury Sedan / Truck / 4x4 (+$40 Surcharge)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Service Package</label>
+                        <select id="modal-package" onchange="recalculateModalTotal()" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyanbright">
+                            <option value="35">Express Wash ($35)</option>
+                            <option value="75" selected>Premium Detail ($75)</option>
+                            <option value="150">Ceramic Shield ($150)</option>
+                            <option value="95">Doorstep Mobile Spa ($95)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Optional Add-ons</label>
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <label class="glass-card p-3 rounded-xl flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" value="30" onchange="recalculateModalTotal()" class="modal-addon w-4 h-4 text-cyanbright rounded">
+                                <span class="text-slate-200">Engine Bay Wash (+$30)</span>
+                            </label>
+                            <label class="glass-card p-3 rounded-xl flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" value="35" onchange="recalculateModalTotal()" class="modal-addon w-4 h-4 text-cyanbright rounded">
+                                <span class="text-slate-200">Leather Care (+$35)</span>
+                            </label>
+                            <label class="glass-card p-3 rounded-xl flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" value="45" onchange="recalculateModalTotal()" class="modal-addon w-4 h-4 text-cyanbright rounded">
+                                <span class="text-slate-200">Ceramic Gloss (+$45)</span>
+                            </label>
+                            <label class="glass-card p-3 rounded-xl flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" value="40" onchange="recalculateModalTotal()" class="modal-addon w-4 h-4 text-cyanbright rounded">
+                                <span class="text-slate-200">Headlight Rest. (+$40)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: WASH LOCATION -->
+                <div id="booking-step-2" class="space-y-5 hidden">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Choose Service Location Mode</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="button" onclick="setLocMode('station')" id="loc-btn-station" class="p-4 rounded-xl glass-card border-2 border-cyanbright text-left flex flex-col justify-between h-32">
+                            <i class="fa-solid fa-warehouse text-2xl text-cyanbright"></i>
+                            <div>
+                                <h5 class="font-bold text-white text-sm">At Wash Station</h5>
+                                <p class="text-[10px] text-slate-400">Bring car to HQ hub</p>
+                            </div>
+                        </button>
+                        <button type="button" onclick="setLocMode('doorstep')" id="loc-btn-doorstep" class="p-4 rounded-xl glass-card border-2 border-transparent text-left flex flex-col justify-between h-32">
+                            <i class="fa-solid fa-truck-sparkles text-2xl text-slate-400"></i>
+                            <div>
+                                <h5 class="font-bold text-white text-sm">Doorstep Mobile Van</h5>
